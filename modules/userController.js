@@ -44,7 +44,6 @@
 // export const updateUser = async (req, res) => {
 //     try {
 //         const { id } = req.params;
-
 //         const userExist = await userAdmin.findById(id);
 //         if (!userExist || Object.keys(userExist).length === 0) {
 //             return res.status(409).json({ message: "User not Exist" });
