@@ -1,6 +1,7 @@
 import express from "express";
 // import { createUser, delUser, getUser, updateUser } from "../modules/userController.js";
 import { signUp, userLogin } from "../modules/auth/authController.js";
+import { SignInValidationRequest } from "../middlewares/validation/index.js";
 
 
 export const router = express.Router();
@@ -11,6 +12,6 @@ export const router = express.Router();
 // router.delete("/delete" , delUser);
 
 
-router.post("/signUp" , signUp);
+router.post("/signUp" ,[SignInValidationRequest] ,signUp);
 router.post("/signIn" , userLogin );
 
