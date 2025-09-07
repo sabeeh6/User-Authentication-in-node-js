@@ -1,25 +1,6 @@
-// import joi from "joi";
-
-// export const signInValidationSchema = joi.object({
-//     name:joi.required().label("Name"),
-//     email: joi.string().required().email().label("Email"),
-//     password:joi.string()
-//     .min(8)
-//     .pattern(/^(?=.*[a-zA-Z])(?=.*\d)/)
-//     .messages({
-//         "string.patterin.base"  :"Password must contain at least one letter and one number"
-//     })  
-//     .required() 
-//     ,
-//     age:joi.required().label("Age")
-// })
-
-
-// CODE FROM GPT 
-
 import Joi from "joi";
 
-export const signInValidationSchema = Joi.object({
+export const signUpValidationSchema = Joi.object({
     name: Joi.string()
         .required()
         .label("Name")
@@ -54,3 +35,24 @@ export const signInValidationSchema = Joi.object({
             "any.required": "Age is required"
         })
 });
+
+export const signInValidationSchema = Joi.object({
+    email: Joi.string()
+    .required()
+    .email()
+    .label("Email")
+    .messages({
+        "string.email":"Enter the valid email id ",
+        "any.required":"Email is required"
+    }),
+    password:Joi.string()
+    .min(8)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+    .label("Password")
+    .messages({
+        "string.min": "Password must contain ata least 8 characters",
+        "string.pattern.base" : "Password must contain at least one upercase , one lowercase , one number and one special character",
+        "any.required":"Password is required"
+    })
+
+})
