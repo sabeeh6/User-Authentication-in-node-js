@@ -1,6 +1,6 @@
 import express from "express";
 // import { createUser, delUser, getUser, updateUser } from "../modules/userController.js";
-import { signUp, userLogin } from "../modules/auth/authController.js";
+import { forgotPassword, resetPassword, signUp, userLogin } from "../modules/auth/authController.js";
 import { signInValidationRequest, SignUpValidationRequest } from "../middlewares/validation/index.js";
 
 
@@ -15,3 +15,5 @@ export const router = express.Router();
 router.post("/signUp" ,[SignUpValidationRequest] ,signUp);
 router.post("/signIn" ,[signInValidationRequest] , userLogin );
 
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);

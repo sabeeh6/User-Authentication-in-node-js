@@ -56,3 +56,29 @@ export const signInValidationSchema = Joi.object({
     })
 
 })
+
+export const forgotPasswordValidationSchema = Joi.object({
+
+})
+
+// export const auth = async (req, res, next) => {
+//     try {
+//         const token = req.headers['authorization'];
+//         if (!token) {
+//             return res.status(401).json({
+//                 message: 'You are not authorized to access this protected resource',
+//                 statusCode: 401,
+//             });
+//         }
+//         const protectedToken = token.slice('Bearer '.length);
+//         const decoded = jwt.verify(protectedToken, config.jwt.secret);
+        
+//         next();
+//     } catch (error) {
+//         console.log(error);
+//         res.status(400).json({
+//             message: 'Token Is Invalid!',
+//             statusCode: 400,
+//         });
+//     }
+// };
