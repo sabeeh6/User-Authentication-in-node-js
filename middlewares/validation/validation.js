@@ -58,7 +58,15 @@ export const signInValidationSchema = Joi.object({
 })
 
 export const forgotPasswordValidationSchema = Joi.object({
-
+    password:Joi.string()
+    .min(8)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+    .label("Password")
+    .messages({
+        "string.min": "Password must contain ata least 8 characters",
+        "string.pattern.base" : "Password must contain at least one upercase , one lowercase , one number and one special character",
+        "any.required":"Password is required"
+    })
 })
 
 // export const auth = async (req, res, next) => {

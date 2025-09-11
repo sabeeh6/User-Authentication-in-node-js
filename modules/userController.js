@@ -106,7 +106,8 @@ export const forgotPassword1 = async(req , res) => {
 
         req.session.email = {email};   
         const hey = req.session.email;
-        console.log("hey", hey);
+        console.log("hey", req.session.email);
+        console.log("he", req.session);
 
         await Otp.create({
             userId:user._id,
@@ -144,6 +145,8 @@ export const verifyOtp = async (req , res) =>{
         if (!isMatch) {
             return res.status(400).json({message:"Wrong otp"})
         }
+    console.log(req.session);
+    console.log(req.session.email);
     
         return res.status(200).json({
             message:"Otp verified 🎀"
@@ -154,3 +157,46 @@ export const verifyOtp = async (req , res) =>{
         return res.status(500).json({message:"Internal server error"})
     }
 }
+
+export const resetPassword1 = async (req, res) => {
+  try {
+    const { password } = req.body;
+console.log(req.session);
+
+    // 1. Check if session email exists
+    if (!req.session || !req.session.email) {
+      return res.status(400).json({ message: "Session expired or email not found" });
+    }
+
+    // 2. Find user by session email
+    const user = await userAdmin.findOne( req.session.email );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 3. Hash new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4. Update user password
+    const updatedUser = await userAdmin.findOneAndUpdate(
+       req.session.email ,
+      { $set: { password: hashedPassword } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(500).json({ message: "Password update failed" });
+    }
+
+    // 5. Success response
+    return res.status(200).json({
+      message: "Password reset successfully",
+      email: updatedUser.email, // optional, for confirmation
+    });
+  } catch (error) {
+    console.error("Error", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
