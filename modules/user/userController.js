@@ -83,10 +83,9 @@
 //     }
 // }
 
-
-import { sendEmail } from "../middlewares/utility/sendEmail.js";
-import Otp from "../models/otp.js";
-import { userAdmin } from "../models/user.js"
+import { sendEmail } from "../../middlewares/utility/sendEmail.js";
+import Otp from "../../models/otp.js";
+import { userAdmin } from "../../models/user.js"
 import bcrypt from 'bcrypt'
 
 export const forgotPassword1 = async(req , res) => {
@@ -104,10 +103,10 @@ export const forgotPassword1 = async(req , res) => {
 
         const expiryDate = Date.now() + 60 * 60 * 1000
 
-        req.session.email = {email};   
-        const hey = req.session.email;
-        console.log("hey", req.session.email);
-        console.log("he", req.session);
+        // req.session.email = {email};   
+        // const hey = req.session.email;
+        // console.log("hey", req.session.email);
+        // console.log("he", req.session);
 
         await Otp.create({
             userId:user._id,
@@ -131,10 +130,10 @@ export const forgotPassword1 = async(req , res) => {
 
 export const verifyOtp = async (req , res) =>{
     try {
-        const {otp} = req.body
-        const email = req.session.email
-        const otpUser = await Otp.findOne(email);
-
+        const {otp , email} = req.body
+        // const email = req.session.email
+        const otpUser = await Otp.findOne({email});
+        
         if (!otpUser) {
             return res.status(400).json({message:"Not found or expired"})
         }
@@ -145,13 +144,10 @@ export const verifyOtp = async (req , res) =>{
         if (!isMatch) {
             return res.status(400).json({message:"Wrong otp"})
         }
-    console.log(req.session);
-    console.log(req.session.email);
     
         return res.status(200).json({
             message:"Otp verified 🎀"
-        })
-        
+        })        
     } catch (error) {
         console.error("Error" , error);
         return res.status(500).json({message:"Internal server error"})
@@ -160,26 +156,20 @@ export const verifyOtp = async (req , res) =>{
 
 export const resetPassword1 = async (req, res) => {
   try {
-    const { password } = req.body;
-console.log(req.session);
-
-    // 1. Check if session email exists
-    if (!req.session || !req.session.email) {
+    const { password , email  } = req.body;
+    // const {email} = req.query
+    if (!email) {
       return res.status(400).json({ message: "Session expired or email not found" });
     }
 
-    // 2. Find user by session email
-    const user = await userAdmin.findOne( req.session.email );
+    const user = await userAdmin.findOne({email});
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 3. Hash new password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 4. Update user password
     const updatedUser = await userAdmin.findOneAndUpdate(
-       req.session.email ,
+        {email} ,
       { $set: { password: hashedPassword } },
       { new: true }
     );
@@ -188,15 +178,11 @@ console.log(req.session);
       return res.status(500).json({ message: "Password update failed" });
     }
 
-    // 5. Success response
     return res.status(200).json({
-      message: "Password reset successfully",
-      email: updatedUser.email, // optional, for confirmation
+      message: "Password reset successfully"
     });
   } catch (error) {
     console.error("Error", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
