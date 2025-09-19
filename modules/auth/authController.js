@@ -1,7 +1,6 @@
 import { userAdmin } from "../../models/user.js";
 import bcrypt from "bcrypt";
 import { createToken } from "./authService.js";
-import crypto from "crypto";
 import Otp from '../../models/otp.js';
 import { sendEmail } from "../../middlewares/utility/sendEmail.js";
 
@@ -31,23 +30,20 @@ export const signUp = async(req,res)=>{
 export const userLogin = async(req,res)=>{
     try {
         const { email , password} = req.body
-
         const userExist = await userAdmin.findOne({email})
-        // !userExist?res.status(401).json({message:"Incorrect email"}):null;
         if (!userExist) {
-            return res.status(409).json({message:"Incorect email"});
+            return res.status(409).json({message:"Invalid credentials"});
         }
 
         const validatePassword = await bcrypt.compare(password , userExist.password);
         console.log(password , validatePassword);
         
-        // !validatePassword? res.status(419).json({message:"Incorrect Password "}):null;
         if (!validatePassword) {
-            return res.status(409).json({message:"Incorrect Password"});
+            return res.status(409).json({message:"Invalid credentials"});
         }
         
-        const userId = userExist._id
-        console.log(userId);
+        // const userId = userExist._id
+        // console.log(userId);
         const loginToken = createToken(userId);
         console.log("Login Token",loginToken);
         
@@ -77,11 +73,6 @@ export const forgotPassword1 = async(req , res) => {
         console.log(generateOtp);
 
         const expiryDate = Date.now() + 60 * 60 * 1000
-
-        // req.session.email = {email};   
-        // const hey = req.session.email;
-        // console.log("hey", req.session.email);
-        // console.log("he", req.session);
 
         await Otp.create({
             userId:user._id,
